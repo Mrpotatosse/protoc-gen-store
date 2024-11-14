@@ -1,0 +1,11 @@
+version: v1
+breaking:
+  use:
+    - FILE
+deps:
+lint:
+  use:
+    - DEFAULT
+  except:
+    - RPC_RESPONSE_STANDARD_NAME
+    - RPC_REQUEST_RESPONSE_UNIQUE

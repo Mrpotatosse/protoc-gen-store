@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option go_package = "github.com/Mrpotatosse/protoc-gen-store/internal/pkg/pb;pb";
+
+message TestMessage {
+    string testProperty = 1;
+}
+
+message HelloWorldMessage {
+    string message = 1;
+}

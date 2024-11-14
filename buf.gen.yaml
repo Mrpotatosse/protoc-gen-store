@@ -1,0 +1,10 @@
+version: v1
+plugins:
+  - name: go
+    out: cmd/protoc-gen-store/testdata
+    opt: paths=source_relative
+  - name: store
+    path: out/bin/protoc-gen-store
+    out: cmd/protoc-gen-store/testdata
+    opt: paths=source_relative
+

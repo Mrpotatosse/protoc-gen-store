@@ -11,6 +11,10 @@ import (
 func main() {
 	protogen.Options{}.Run(func(plugin *protogen.Plugin) error {
 		for _, file := range plugin.Files {
+			if !file.Generate {
+				continue
+			}
+
 			err := generator.GenerateFile(plugin, file)
 
 			if err != nil {

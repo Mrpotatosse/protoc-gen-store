@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package test.package;
+
+option go_package = "github.com/Mrpotatosse/protoc-gen-store/internal/pkg/pb;pb";
+
+message Asset {
+    string id = 1;
+    double value = 2;
+}
+
+message Test {
+    string popo = 1;
+}
+
+message Pope {
+    double id = 1;
+}

@@ -68,6 +68,10 @@ clean: ## Cleans up everything
 docker: ## Builds docker image
 	docker buildx build --cache-to type=inline -t $(DOCKER_REPO):$(DOCKER_TAG) .
 
+# additional dependencies for grpc
+GO_DEPENDENCIES = google.golang.org/protobuf/cmd/protoc-gen-go \
+				github.com/bufbuild/buf/cmd/buf
+
 define make-go-dependency
   # target template for go tools, can be referenced e.g. via /bin/<tool>
   bin/$(notdir $1):
@@ -76,6 +80,13 @@ endef
 
 # this creates a target for each go dependency to be referenced in other targets
 $(foreach dep, $(GO_DEPENDENCIES), $(eval $(call make-go-dependency, $(dep))))
+.PHONY: cmd/protoc-gen-store/testdata/buf.lock
+cmd/protoc-gen-store/testdata/buf.lock: bin/buf
+	@bin/buf dep update cmd/protoc-gen-store/testdata
+
+generate: ## Generates code from protobuf files
+generate: build cmd/protoc-gen-store/testdata/buf.lock bin/protoc-gen-go
+	PATH=$(PWD)/bin:$$PATH buf generate
 ci: lint-reports test-reports govulncheck ## Executes vulnerability scan, lint, test and generates reports
 
 help: ## Shows the help

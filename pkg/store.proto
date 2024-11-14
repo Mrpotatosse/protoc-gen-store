@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package store.annotations;
+
+option go_package = "github.com/Mrpotatosse/protoc-gen-store/internal/pkg/pb;pb";
+
+import weak "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+    optional bool is_unique = 1001;
+}
