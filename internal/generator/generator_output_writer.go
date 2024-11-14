@@ -152,7 +152,7 @@ func (output *Output) writeMessagesFuncs(writer io.Writer) error {
 	{{end}}})
 }
 
-func (store *Store) Get{{ .Name }}(soul SoulStore) (result {{ if .HasID }}[]{{ end }}*{{ .Name }}, err error) {
+func (store *Store) Get{{ .Name }}(soul StoreSoul) (result {{ if .HasID }}[]{{ end }}*{{ .Name }}, err error) {
 	err = store.db.View(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte({{ .Name }}Key))
 		if err != nil {
