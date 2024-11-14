@@ -2,7 +2,7 @@ package generator
 
 type OutputMessage struct {
 	Name  string
-	HasId bool
+	HasID bool
 }
 
 type Output struct {

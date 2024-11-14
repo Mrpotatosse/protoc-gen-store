@@ -55,7 +55,10 @@ func (output *Output) writeHeaderComments(writer io.Writer) error {
 		return err
 	}
 
-	commentTemplate.Execute(writer, output)
+	err = commentTemplate.Execute(writer, output)
+	if err != nil {
+		return err
+	}
 
 	return writeNewLine(writer)
 }
@@ -116,7 +119,10 @@ func (output *Output) writeStoreKeys(writer io.Writer) error {
 		return err
 	}
 
-	keysTemplate.Execute(writer, output)
+	err = keysTemplate.Execute(writer, output)
+	if err != nil {
+		return err
+	}
 
 	return writeNewLine(writer)
 }
@@ -134,7 +140,7 @@ func (output *Output) writeMessagesFuncs(writer io.Writer) error {
 			return err
 		}
 
-		{{ if .HasId }}
+		{{ if .HasID }}
 		soulBucket, err := bucket.CreateBucketIfNotExists(soul)
 		if err != nil {
 			return err
@@ -146,14 +152,14 @@ func (output *Output) writeMessagesFuncs(writer io.Writer) error {
 	{{end}}})
 }
 
-func (store *Store) Get{{ .Name }}(soul SoulStore) (result {{ if .HasId }}[]{{ end }}*{{ .Name }}, err error) {
+func (store *Store) Get{{ .Name }}(soul SoulStore) (result {{ if .HasID }}[]{{ end }}*{{ .Name }}, err error) {
 	err = store.db.View(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte({{ .Name }}Key))
 		if err != nil {
 			return err
 		}
 
-		{{ if .HasId }}
+		{{ if .HasID }}
 		soulBucket, err := bucket.CreateBucketIfNotExists(soul)
 		if err != nil {
 			return err

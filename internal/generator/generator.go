@@ -25,18 +25,18 @@ func GenerateFile(plugin *protogen.Plugin, file *protogen.File) error {
 	)
 
 	for _, message := range file.Messages {
-		hasId := false
+		hasID := false
 
 		for _, field := range message.Fields {
 			if field.GoName == "Id" && field.Desc.Kind().String() == "string" {
-				hasId = true
+				hasID = true
 				break
 			}
 		}
 
 		AppendMessage(OutputMessage{
 			Name:  message.GoIdent.GoName,
-			HasId: hasId,
+			HasID: hasID,
 		})(output)
 	}
 
