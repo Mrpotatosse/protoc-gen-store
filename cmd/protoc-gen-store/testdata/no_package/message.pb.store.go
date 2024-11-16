@@ -35,7 +35,7 @@ func (store *Store) SetTestMessage(soul StoreSoul, data *TestMessage) error {
 	})
 }
 
-func (store *Store) GetTestMessage(soul SoulStore) (result *TestMessage, err error) {
+func (store *Store) GetTestMessage(soul StoreSoul) (result *TestMessage, err error) {
 	err = store.db.View(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(TestMessageKey))
 		if err != nil {
@@ -65,7 +65,7 @@ func (store *Store) SetHelloWorldMessage(soul StoreSoul, data *HelloWorldMessage
 	})
 }
 
-func (store *Store) GetHelloWorldMessage(soul SoulStore) (result *HelloWorldMessage, err error) {
+func (store *Store) GetHelloWorldMessage(soul StoreSoul) (result *HelloWorldMessage, err error) {
 	err = store.db.View(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(HelloWorldMessageKey))
 		if err != nil {

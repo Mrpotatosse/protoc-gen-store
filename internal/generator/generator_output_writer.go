@@ -164,21 +164,18 @@ func (store *Store) Get{{ .Name }}(soul StoreSoul) (result {{ if .HasID }}[]{{ e
 		if err != nil {
 			return err
 		}
-
-		cursor := soulBucket.Cursor()
-
-		for key, data := cursor.First(); key != nil; key, data = cursor.Next() {
+		
+		return soulBucket.ForEach(func(_, data []byte) error {
 			value := &{{ .Name }}{}
-
+			
 			err := proto.Unmarshal(data, value)
 			if err != nil {
 				return err
 			}
 
 			result = append(result, value)
-		}
-
-		return nil
+			return nil
+		})
 		{{ else }}
 		data := bucket.Get(soul)
 		return proto.Unmarshal(data, result)
@@ -186,6 +183,26 @@ func (store *Store) Get{{ .Name }}(soul StoreSoul) (result {{ if .HasID }}[]{{ e
 
 	return result, err
 }
+{{ if .HasID }}
+func (store *Store) Get{{ .Name }}ById(soul StoreSoul, id string) (result *{{ .Name }}, err error) {
+	err = store.db.View(func (tx *bolt.Tx) error {
+		bucket, err := tx.CreateBucketIfNotExists([]byte({{ .Name }}Key))
+		if err != nil {
+			return err
+		}
+
+		soulBucket, err := bucket.CreateBucketIfNotExists(soul)
+		if err != nil {
+			return err
+		}
+
+		data := soulBucket.Get([]byte(id))
+		return proto.Unmarshal(data, result)
+	})
+	
+	return result, err
+}
+{{end}}
 `
 
 	funcsTemplate, err := template.New("funcs-template").Parse(funcsTemplateString)

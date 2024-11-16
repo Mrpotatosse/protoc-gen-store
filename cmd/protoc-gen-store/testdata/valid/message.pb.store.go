@@ -41,7 +41,7 @@ func (store *Store) SetAsset(soul StoreSoul, data *Asset) error {
 	})
 }
 
-func (store *Store) GetAsset(soul SoulStore) (result []*Asset, err error) {
+func (store *Store) GetAsset(soul StoreSoul) (result []*Asset, err error) {
 	err = store.db.View(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(AssetKey))
 		if err != nil {
@@ -53,9 +53,7 @@ func (store *Store) GetAsset(soul SoulStore) (result []*Asset, err error) {
 			return err
 		}
 
-		cursor := soulBucket.Cursor()
-
-		for key, data := cursor.First(); key != nil; key, data = cursor.Next() {
+		return soulBucket.ForEach(func(_, data []byte) error {
 			value := &Asset{}
 
 			err := proto.Unmarshal(data, value)
@@ -64,9 +62,27 @@ func (store *Store) GetAsset(soul SoulStore) (result []*Asset, err error) {
 			}
 
 			result = append(result, value)
+			return nil
+		})
+	})
+
+	return result, err
+}
+
+func (store *Store) GetAssetById(soul StoreSoul, id string) (result *Asset, err error) {
+	err = store.db.View(func(tx *bolt.Tx) error {
+		bucket, err := tx.CreateBucketIfNotExists([]byte(AssetKey))
+		if err != nil {
+			return err
 		}
 
-		return nil
+		soulBucket, err := bucket.CreateBucketIfNotExists(soul)
+		if err != nil {
+			return err
+		}
+
+		data := soulBucket.Get([]byte(id))
+		return proto.Unmarshal(data, result)
 	})
 
 	return result, err
@@ -88,7 +104,7 @@ func (store *Store) SetTest(soul StoreSoul, data *Test) error {
 	})
 }
 
-func (store *Store) GetTest(soul SoulStore) (result *Test, err error) {
+func (store *Store) GetTest(soul StoreSoul) (result *Test, err error) {
 	err = store.db.View(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(TestKey))
 		if err != nil {
@@ -118,7 +134,7 @@ func (store *Store) SetPope(soul StoreSoul, data *Pope) error {
 	})
 }
 
-func (store *Store) GetPope(soul SoulStore) (result *Pope, err error) {
+func (store *Store) GetPope(soul StoreSoul) (result *Pope, err error) {
 	err = store.db.View(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(PopeKey))
 		if err != nil {
